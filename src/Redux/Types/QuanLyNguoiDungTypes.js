@@ -1,0 +1,1 @@
+export const dang_ky = "dang_ky"
