@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
+import { actionXoaInfor } from '../Redux/Action/QuanLyNguoiDungAction';
 class TableDanhSachNguoiDung extends Component {
 
     renderInfor = () => {
@@ -9,16 +10,15 @@ class TableDanhSachNguoiDung extends Component {
                 <td>{item.taiKhoan}</td>
                 <td>{item.hoTen}</td>
                 <td>{item.matKhau}</td>
-                <td>{item.soDienThoai}</td>
+                <td>{item.soDT}</td>
                 <td>{item.email}</td>
                 <td>{item.loaiNguoiDung}</td>
                 <td>
                     <button className='btn btn-primary mx-2' onClick={() => {}}>Chỉnh Sửa</button>
-                    <button className="btn btn-danger">Xoá</button>
+                    <button className="btn btn-danger" onClick={() => {this.props.dispatch(actionXoaInfor(item.id))}}>Xoá</button>
                 </td>
             </tr>
         })
-        // console.log(this.props.infor)
 
     }
 

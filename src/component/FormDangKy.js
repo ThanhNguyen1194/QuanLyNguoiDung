@@ -9,7 +9,7 @@ class FormDangKy extends Component {
             taiKhoan: "",
             hoTen: "",
             matKhau: "",
-            soDienThoai: "",
+            soDT: "",
             email: "",
             loaiNguoiDung: "Khách hàng",
         },
@@ -17,7 +17,7 @@ class FormDangKy extends Component {
             taiKhoan: "",
             hoTen: "",
             matKhau: "",
-            soDienThoai: "",
+            soDT: "",
             email: "",
         }
 
@@ -82,8 +82,8 @@ class FormDangKy extends Component {
             icon: 'success',
             confirmButtonText: 'Done'
           })
-          
-          this.props.dispatch(actionDangKy(values))
+          let newValue = {...values,id:Date.now()}
+          this.props.dispatch(actionDangKy(newValue))
     }
 
     render() {
@@ -112,8 +112,8 @@ class FormDangKy extends Component {
                             </div>
                             <div className="col-6">
                                 <h5>Số Điện Thoại</h5>
-                                <input name='soDienThoai' value={this.state.values.soDienThoai} className='w-100 mb-2 p-2' onChange={this.handleChangeValue} />
-                                <span className='text-danger text'>{this.state.errors.soDienThoai}</span>
+                                <input name='soDT' value={this.state.values.soDT} className='w-100 mb-2 p-2' onChange={this.handleChangeValue} />
+                                <span className='text-danger text'>{this.state.errors.soDT}</span>
                             </div>
                             <div className="col-6">
                                 <h5>Email</h5>
@@ -133,10 +133,7 @@ class FormDangKy extends Component {
                             <button className='btn btn-success' onClick={
                                 this.handleSubmit
                                 }>Đăng Ký</button>
-                            <button className='btn btn-primary mx-2' onClick={() =>{}}
-                              
-                                
-                             >Cập Nhật</button>
+                            <button className='btn btn-primary mx-2' onClick={() =>{}}>Cập Nhật</button>
                         </div>
                     </div>
                 </div>
