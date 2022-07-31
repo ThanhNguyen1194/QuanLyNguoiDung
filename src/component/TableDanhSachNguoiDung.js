@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { actionXoaInfor } from '../Redux/Action/QuanLyNguoiDungAction';
+import { actionEditValue, actionXoaInfor } from '../Redux/Action/QuanLyNguoiDungAction';
 class TableDanhSachNguoiDung extends Component {
+
+
 
     renderInfor = () => {
         return this.props.values.map((item, index) => {
@@ -14,7 +16,7 @@ class TableDanhSachNguoiDung extends Component {
                 <td>{item.email}</td>
                 <td>{item.loaiNguoiDung}</td>
                 <td>
-                    <button className='btn btn-primary mx-2' onClick={() => {}}>Chỉnh Sửa</button>
+                    <button className='btn btn-primary mx-2' onClick={() => {this.props.dispatch(actionEditValue(item))}}>Chỉnh Sửa</button>
                     <button className="btn btn-danger" onClick={() => {this.props.dispatch(actionXoaInfor(item.id))}}>Xoá</button>
                 </td>
             </tr>

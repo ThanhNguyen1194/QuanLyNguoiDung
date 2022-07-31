@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Swal from 'sweetalert2'
 import { connect } from 'react-redux'
-import { actionDangKy } from '../Redux/Action/QuanLyNguoiDungAction'
+import { actionDangKy, actionUpdate } from '../Redux/Action/QuanLyNguoiDungAction'
 
 class FormDangKy extends Component {
     state = {
@@ -19,7 +19,7 @@ class FormDangKy extends Component {
             matKhau: "",
             soDT: "",
             email: "",
-        }
+        },
 
     }
 
@@ -35,11 +35,11 @@ class FormDangKy extends Component {
         }
 
         if (type === 'email') {
-            const regexEmail =  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            const regexEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-            if(!regexEmail.test(value)){
+            if (!regexEmail.test(value)) {
                 newError[name] = name + " invalid email address"
-            }else{
+            } else {
                 newError[name] = ''
             }
 
@@ -54,26 +54,29 @@ class FormDangKy extends Component {
 
 
     handleSubmit = () => {
-       
-        let {values , errors} = this.state;
+
+        let { values, errors } = this.state;
+        let newValues = { ...values, id: Date.now() }
         let valid = true;
-        for(let key in values) {
-            if(values[key] === ""){
+        for (let key in newValues) {
+            if (newValues[key] === "") {
                 valid = false;
             }
         }
-        for(let key in errors) {
-            if(errors[key] !== ""){
+        for (let key in errors) {
+            if (errors[key] !== "") {
                 valid = false;
             }
         }
-        if(!valid){
+        console.log(valid)
+        console.log(newValues)
+        if (!valid) {
             Swal.fire({
                 title: 'Error',
                 text: 'Dữ liệu không hợp lệ',
                 icon: 'error',
                 confirmButtonText: 'Done'
-              })
+            })
             return;
         }
         Swal.fire({
@@ -81,9 +84,46 @@ class FormDangKy extends Component {
             text: 'Thành Công',
             icon: 'success',
             confirmButtonText: 'Done'
-          })
-          let newValue = {...values,id:Date.now()}
-          this.props.dispatch(actionDangKy(newValue))
+        })
+        
+        this.props.dispatch(actionDangKy(newValues))
+        this.setState({values: {...this.state.values,taiKhoan: "", hoTen: "", matKhau: "", email: "", soDT: "",id:""}})
+        console.log("state",this.state.values)
+    }
+        handleUpdate = () => {
+            let { values, errors } = this.state;
+            let valid = true;
+            for (let key in values) {
+                if (values[key] === "") {
+                    valid = false;
+                }
+            }
+            for (let key in errors) {
+                if (errors[key] !== "") {
+                    valid = false;
+                }
+            }
+            if (!valid) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Dữ liệu không hợp lệ',
+                    icon: 'error',
+                    confirmButtonText: 'Done'
+                })
+                this.props.dispatch({type:"clear"})
+                return;
+            }
+            this.props.dispatch(actionUpdate(this.state.values))
+        }
+
+    
+
+    static getDerivedStateFromProps(newProp, currentState) {
+        if (currentState.values.id !== newProp.editValue.id) {
+            let newState = { ...currentState, values: newProp.editValue }
+            return newState;
+        }
+        return currentState
     }
 
     render() {
@@ -112,7 +152,7 @@ class FormDangKy extends Component {
                             </div>
                             <div className="col-6">
                                 <h5>Số Điện Thoại</h5>
-                                <input name='soDT' value={this.state.values.soDT} className='w-100 mb-2 p-2' onChange={this.handleChangeValue} />
+                                <input type="tel" maxlength="10" name='soDT' value={this.state.values.soDT} className='w-100 mb-2 p-2' onChange={this.handleChangeValue} />
                                 <span className='text-danger text'>{this.state.errors.soDT}</span>
                             </div>
                             <div className="col-6">
@@ -132,8 +172,20 @@ class FormDangKy extends Component {
                         <div>
                             <button className='btn btn-success' onClick={
                                 this.handleSubmit
-                                }>Đăng Ký</button>
-                            <button className='btn btn-primary mx-2' onClick={() =>{}}>Cập Nhật</button>
+                            }>Đăng Ký</button>
+
+                            {!this.props.editValue.taiKhoan ?
+                                <button disabled className='btn btn-primary mx-2' onClick={() => {}}>Cập Nhật</button>
+                                : <button className='btn btn-primary mx-2' onClick={() => {
+                                    // this.props.dispatch(actionUpdate(this.state.values))
+                                    this.handleUpdate()
+                                    this.setState({
+                                        values: {...this.state.values,taiKhoan: "", hoTen: "", matKhau: "", email: "", soDT: "",id:""},
+                                        errors: {...this.state.errors,taiKhoan: "", hoTen: "", matKhau: "", email: "", soDT: ""}
+                                    });
+                                }}>Cập Nhật</button>
+
+                            }
                         </div>
                     </div>
                 </div>
@@ -143,5 +195,10 @@ class FormDangKy extends Component {
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        editValue: state.QuanLyNguoiDungReducer.editValue,
+    }
+}
 
-export default connect()(FormDangKy)
+export default connect(mapStateToProps)(FormDangKy)
